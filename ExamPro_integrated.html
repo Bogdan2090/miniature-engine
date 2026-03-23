@@ -736,9 +736,132 @@ select.inp{cursor:pointer}
 
 let learnChap=0;
 
+// ── Personalități din programă, indexate per capitol (titlul LEARN_CHAPTERS[i].title) ──
+const LEARN_PERSONS={
+  "Primul Război Mondial – Context, desfășurare, consecințe":[
+    {n:"Ferdinand I",y:"1865–1927",role:"Rege al României (1914–1927)",bio:"Supranumit 'Întregitorul', a condus România în WWI alături de Antantă. Sub domnia sa s-a realizat Marea Unire (1918) și a fost promulgată Constituția democratică din 1923. A patronat reformele agrare și a asigurat cadrul modern al statului român.",sig:"Simbolul unificării naționale române."},
+    {n:"Regina Maria",y:"1875–1938",role:"Regina României",bio:"A ridicat moralul armatei și al populației civile în timpul retragerii în Moldova (1916-1917). A reprezentat România la Conferința de Pace de la Paris (1919), obținând recunoașterea internațională a Marii Uniri. Admirată în întreaga lume pentru curajul și diplomația sa.",sig:"Diplomata care a cucerit Parisul pentru România."},
+    {n:"Ion I.C. Brătianu",y:"1864–1927",role:"Prim-ministru al României",bio:"A negociat Tratatul de alianță cu Antanta (august 1916), asigurând intrarea României în război cu garanții teritoriale. A participat la Conferința de Pace de la Paris și a semnat Constituția din 1923.",sig:"Arhitectul politicii externe a României Mari."},
+  ],
+  "Conferința de Pace de la Paris (1919–1920)":[
+    {n:"Woodrow Wilson",y:"1856–1924",role:"Președinte SUA",bio:"A propus 'Cele 14 Puncte' (1918), baza negocierilor de pace, inclusiv principiul autodeterminării naționale. A insistat pentru crearea Ligii Națiunilor. Paradoxal, Senatul american a refuzat ratificarea Tratatului de la Versailles.",sig:"Arhitectul principiilor noii ordini internaționale postbelice."},
+    {n:"Georges Clemenceau",y:"1841–1929",role:"Prim-ministru al Franței",bio:"Supranumit 'Tigrul', a reprezentat Franța la Conferință. A cerut condiții severe pentru Germania pentru a preveni un nou atac. A semnat Tratatul de la Versailles (28 iunie 1919).",sig:"Vocea Franței pentru sancțiuni dure împotriva Germaniei."},
+  ],
+  "Sistemul de Tratate de la Versailles":[
+    {n:"Nicolae Titulescu",y:"1882–1941",role:"Diplomat, ministru de externe al României",bio:"Ales de două ori consecutiv președinte al Adunării Generale a Ligii Națiunilor (1930–1931). A promovat securitatea colectivă și dezarmarea. A restabilit relațiile diplomatice cu URSS (1934) și a consolidat Mica Înțelegere.",sig:"Cel mai mare diplomat român al perioadei interbelice."},
+  ],
+  "România interbelică. Modernizare politică, economică și culturală":[
+    {n:"Carol II",y:"1893–1953",role:"Rege al României (1930–1940)",bio:"Fiu al lui Ferdinand I, a instaurat regimul autoritar-regal (10 febr. 1938), suspendând Constituția din 1923. Sub domnia sa România a pierdut teritorii în 1940 (Basarabia, N.Bucovina, N.Transilvania). A abdicat forțat pe 6 septembrie 1940.",sig:"Personalitate contradictorie — mecena al artelor, dar distrugătorul democrației române."},
+    {n:"Alexandru Averescu",y:"1859–1938",role:"General și prim-ministru",bio:"Comandant suprem al Armatei Române în victoriile de la Mărăști, Mărășești, Oituz (1917). Prim-ministru în 1920–1921 și 1926–1927. A implementat reforma agrară din 1921.",sig:"Eroul militar și om politic al primei decade interbelice."},
+  ],
+  "Mișcarea națională din Basarabia. Unirea din 1918":[
+    {n:"Ion Inculeț",y:"1884–1940",role:"Primul președinte al Sfatului Țării",bio:"A prezidat Sfatul Țării și a condus votul unirii Basarabiei cu România (27 martie 1918, 86 pentru, 3 contra). A negociat condițiile unirii cu guvernul român și a reprezentat Basarabia în structurile statului unificat.",sig:"Principalul arhitect al Unirii Basarabiei cu România."},
+    {n:"Alexei Mateevici",y:"1888–1917",role:"Preot și poet",bio:"Autorul poemului 'Limba noastră' (1917), imn al identității românești în Basarabia. A contribuit la trezirea conștiinței naționale în ajunul Unirii din 1918. Mort la numai 29 de ani, a lăsat o moștenire culturală uriașă. 'Limba noastră' a devenit imnul de stat al R.Moldova în 1994.",sig:"Vocea poetică a renașterii naționale basarabene."},
+    {n:"Pantelimon Halippa",y:"1883–1979",role:"Politician, director Sfatul Țării",bio:"Lider al Partidului Național Moldovenesc și redactor-șef al ziarului 'Cuvânt Moldovenesc'. A contribuit esențial la organizarea Sfatului Țării și la pregătirea Unirii. Ulterior condamnat de regimul sovietic și trimis în Gulag.",sig:"Figură centrală a mișcării naționale basarabene."},
+  ],
+  "Relațiile Internaționale în Perioada Interbelică":[
+    {n:"Nicolae Titulescu",y:"1882–1941",role:"Diplomat român, ministru de externe",bio:"Cel mai strălucit diplomat român al perioadei interbelice. Ales de două ori președinte al Ligii Națiunilor (1930-1931). A negociat tratatele de securitate regională (Mica Înțelegere, Înțelegerea Balcanică) și a restabilit relațiile cu URSS.",sig:"Promotor al securității colective și al dezarmării mondiale."},
+  ],
+  "Al Doilea Război Mondial":[
+    {n:"Ion Antonescu",y:"1882–1946",role:"Conducătorul statului român (1940-1944)",bio:"Mareșal al României, a condus statul în alianță cu Germania (1940-1944). A ordonat recuperarea Basarabiei și Bucovinei (1941). Judecat și executat pentru crime de război la 1 iunie 1946. Figura sa rămâne controversată în istoriografie.",sig:"Conducătorul care a implicat România în cel mai devastator conflict mondial."},
+    {n:"Regele Mihai I",y:"1921–2017",role:"Rege al României (1927-1930, 1940-1947)",bio:"A orchestrat lovitura de stat din 23 august 1944 — arestarea lui Antonescu și trecerea României de partea Aliaților. Act care a scurtat cu 6 luni al Doilea Război Mondial pe Frontul de Est. Decorat cu Legiunea de Onoare și Ordinul Victoria.",sig:"Salvatorul României prin actul de la 23 august 1944."},
+    {n:"Winston Churchill",y:"1874–1965",role:"Prim-ministru al Marii Britanii",bio:"A refuzat negocierile cu Hitler în 1940, când Marea Britanie era singura putere care rezista. A contribuit la formarea Coaliției Antihitleriste și la victoria finală. Premiul Nobel pentru Literatură (1953).",sig:"'Cel mai bun Englez' — simbolul rezistenței democratice împotriva nazismului."},
+  ],
+  "Lumea Postbelică (1945–1991)":[
+    {n:"Mihail Gorbaciov",y:"1931–2022",role:"Secretar general PCUS, Președinte URSS",bio:"A lansat Perestroika (restructurarea) și Glasnost (transparența) în 1985, reforme ce au accelerat destrămarea URSS. A retras trupele din Afganistan și a permis reunificarea Germaniei. Premiul Nobel pentru Pace (1990).",sig:"Omul care a pus capăt Războiului Rece și a dizolvat URSS."},
+    {n:"Helmut Kohl",y:"1930–2017",role:"Cancelar al RFG (1982–1998)",bio:"A realizat unificarea celor două Germanii (1990), primul cancelar al Germaniei unite. European convins, a reînnodat legăturile cu Franța. A contribuit decisiv la adâncirea integrării europene.",sig:"Arhitectul reunificării germane și al Europei unite."},
+  ],
+  "RSSM și Regimul Comunist Stalinist":[
+    {n:"Iosif Stalin",y:"1878–1953",role:"Secretar general al PC al URSS (1924–1953)",bio:"A industrializat forțat URSS prin planuri cincinale, transformând-o în superputere mondială. A impus teroarea stalinistă: deportări, Gulag, epurări — zeci de milioane de victime. Cultul personalității la proporții extreme.",sig:"Cel mai mare tiran al secolului XX, conform multor istorici."},
+    {n:"Gheorghe Ghimpu",y:"1937–2013",role:"Activist, disident, om politic",bio:"A contribuit la mișcarea de rezistență anticomunistă în RSSM. Co-fondator al Frontului Popular din Moldova și participant la Marea Adunare Națională din 1989. A apărat dreptul la identitate națională românească.",sig:"Simbol al rezistenței democratice în RSSM."},
+  ],
+  "Independența Republicii Moldova (1985–1991)":[
+    {n:"Mircea Snegur",y:"1940–",role:"Primul Președinte al R.Moldova",bio:"A prezidat procesul de proclamare a independenței și a semnat Declarația de Independență pe 27 august 1991. Primul președinte ales democratic al Republicii Moldova (8 decembrie 1991).",sig:"Primul lider democratic al Republicii Moldova independente."},
+    {n:"Alexandru Moșanu",y:"1932–2020",role:"Președintele Parlamentului",bio:"A prezidat ședința istorică a Parlamentului din 27 august 1991 în care s-a votat Declarația de Independență. A promovat legislația democratică: limba română, tricolorul, stema de stat.",sig:"Garantul legal al independenței R.Moldova."},
+    {n:"Grigore Vieru",y:"1935–2009",role:"Poet",bio:"Poet emblematic al identității românești în Basarabia — versurile despre limbă și patrie ('Acasă', 'Mama') au mobilizat mișcarea națională în 1988-1991. Ales membru corespondent al Academiei Române (1993). La moartea sa, sute de mii de oameni l-au condus pe ultimul drum.",sig:"Poetul național al R.Moldova și vocea conștiinței românești basarabene."},
+  ],
+  "Cultură și Știință în Epoca Contemporană":[
+    {n:"Maria Bieșu",y:"1935–2012",role:"Soprană",bio:"Câștigătoarea Concursului Puccini (1967, Tokyo) — prima soprană din spațiul sovietic cu această distincție. A organizat festivalul 'Invită Maria Bieșu', promovând cultura R.Moldova pe scene internaționale.",sig:"Cea mai mare voce din istoria muzicii clasice moldovene."},
+    {n:"Eugen Doga",y:"1937–2025",role:"Compozitor",bio:"'Valsul' din 'Dulcea și tandra mea fiară' — recunoscut mondial. Coloane sonore pentru 'Șatra', 'Lăutarii', 'Maria Mirabela'. A promovat cultura basarabeană la nivel internațional.",sig:"Cel mai cunoscut compozitor din R.Moldova pe mapamond."},
+    {n:"Emil Loteanu",y:"1936–2003",role:"Regizor de film",bio:"Filmele 'Lăutarii' (1971), 'Șatra' (1975), 'Maria Mirabela' (1981) au adus faimă mondială culturii din Basarabia. A colaborat cu Eugen Doga și Mihai Volontir.",sig:"Creatorul celei mai originale școli cinematografice din Basarabia."},
+    {n:"Constantin Brâncuși",y:"1876–1957",role:"Sculptor",bio:"Fondatorul sculpturii moderne mondiale — 'Coloana Infinitului', 'Masa Tăcerii', 'Poarta Sărutului' de la Târgu-Jiu. A influențat profund arta plastică a sec. XX.",sig:"Cel mai influent sculptor al secolului XX."},
+    {n:"Alexandru Plămădeală",y:"1888–1940",role:"Sculptor și pictor",bio:"Autorul monumentului lui Ștefan cel Mare din Chișinău (bronz, 1928) — simbol iconic al identității naționale. A contribuit la renașterea culturală românească în Basarabia interbelică.",sig:"Creatorul celui mai iubit simbol vizual al Chișinăului."},
+  ],
+};
+
+// ── Termeni cheie, indexați per capitol ──
+const LEARN_TERMS={
+  "Primul Război Mondial – Context, desfășurare, consecințe":[
+    {t:"Tratat",d:"Înțelegere scrisă încheiată între două sau mai multe state, stabilind drepturi și obligații reciproce, cu forță juridică obligatorie pentru toate părțile semnatare. Exemplu: Tratatul de la Versailles (1919)."},
+    {t:"Antantă",d:"Alianță politico-militară formată din Franța, Marea Britanie și Rusia (1907). În WWI a luptat împotriva Puterilor Centrale (Germania, Austro-Ungaria, Imperiul Otoman)."},
+    {t:"Armistițiu",d:"Acord de încetare temporară a ostilităților militare, semnat de ambele părți beligerante, ca prim pas spre pacea definitivă. Armistițiul din 11 noiembrie 1918 a pus capăt WWI pe Frontul de Vest."},
+  ],
+  "Sistemul de Tratate de la Versailles":[
+    {t:"Securitate colectivă",d:"Sistem de angajamente reciproce prin care statele membre se obligă să se apere colectiv împotriva oricărei agresiuni. Principiu central al Ligii Națiunilor și mai târziu al ONU."},
+    {t:"Revizionism",d:"Politică prin care un stat urmărește modificarea prin forță sau presiune a tratatelor internaționale și a frontierelor, considerate nedrepte. State revizioniste interbelice: Germania, Ungaria, URSS."},
+    {t:"Ligă Națiunilor",d:"Prima organizație internațională permanentă (1919–1946), creată prin Tratatul de la Versailles cu scopul menținerii păcii mondiale. Precursoarea ONU (1945). Paradox: propusă de Wilson, dar SUA nu a aderat."},
+  ],
+  "România interbelică. Modernizare politică, economică și culturală":[
+    {t:"Constituție",d:"Legea fundamentală a unui stat, care stabilește forma de guvernare și de organizare socială, drepturile și libertățile fundamentale ale cetățenilor, separarea puterilor. Constituția din 1923 — una din cele mai moderne europene."},
+    {t:"Democrație",d:"Formă de organizare politică în care puterea emană de la popor și este exercitată direct sau prin reprezentanți aleși liber. Principii: separarea puterilor, pluripartidism, drepturi și libertăți garantate, presă liberă."},
+    {t:"Autonomie",d:"Dreptul unui teritoriu sau comunități de a se administra singur, în cadrul unui stat condus de o putere centrală. Implică organe proprii de guvernare, dar nu independență deplină față de stat."},
+  ],
+  "Relațiile Internaționale în Perioada Interbelică":[
+    {t:"Alianță",d:"Înțelegere politică sau militară între două sau mai multe state prin care se obligă să acționeze în comun sau să se ajute reciproc. Sistemul de alianțe din 1914 a transformat asasinarea arhiducelui Franz Ferdinand în WWI."},
+    {t:"Pact",d:"Înțelegere (scrisă), tratat internațional bilateral sau multilateral, încheiat în scopul menținerii păcii sau al colaborării semnatarilor. Ex: Pactul Ribbentrop-Molotov (1939), Pactul Briand-Kellogg (1928)."},
+    {t:"Pact de neagresiune",d:"Tratat prin care două sau mai multe state se obligă să nu întreprindă nicio acțiune armată între ele. Pactul Ribbentrop-Molotov (23 august 1939) a fost cel mai infam pact de neagresiune, cu Protocol Secret."},
+  ],
+  "Pierderile Teritoriale ale României în Vara 1940":[
+    {t:"Ultimatum",d:"Cerere categorică adresată de un stat altui stat, cu termen-limită scurt și sub amenințarea forței militare. Nota ultimativă a URSS din 26-28 iunie 1940 a cerut evacuarea Basarabiei în 4 zile — sau invazie militară."},
+    {t:"Suveranitate",d:"Puterea supremă a unui stat de a-și exercita autoritatea deplină pe teritoriul propriu, fără amestec extern. Declarația de Suveranitate a RSSM (23 iunie 1990) a fost primul pas legal spre independența R.Moldova."},
+    {t:"Integritate teritorială",d:"Principiu de bază al dreptului internațional potrivit căruia fiecare stat are dreptul să-și exercite deplin și nestingherit suveranitatea asupra teritoriului său, fără modificări unilaterale."},
+  ],
+  "Al Doilea Război Mondial":[
+    {t:"Coaliție antihitleristă",d:"Alianta statelor care au luptat împotriva Puterilor Axei (Germania, Italia, Japonia) în WWII: SUA, Marea Britanie, URSS, Franța, China și alte state. Formată definitiv după 1941."},
+    {t:"Crime de război",d:"Încălcări grave ale dreptului internațional umanitar în timp de război: uciderea și torturarea civililor sau prizonierilor, sclavagismul, distrugerea infrastructurii civile. Judecate la Tribunalul de la Nürnberg (1945-1946)."},
+    {t:"Holocaust",d:"Exterminarea sistematică și deliberată a aproximativ 6 milioane de evrei de către regimul nazist german (1941–1945). Cea mai mare crimă împotriva umanității din istoria modernă."},
+  ],
+  "Lumea Postbelică (1945–1991)":[
+    {t:"Război Rece",d:"Conflict indirect (1947–1991) între SUA și URSS, fără confruntare militară directă, manifestat prin: cursă a înarmărilor nucleare, propagandă, conflicte prin delegați (Coreea, Vietnam, Cuba), competiție spațială."},
+    {t:"Cortina de fier",d:"Expresie a lui Winston Churchill (discurs Fulton, 5 martie 1946) pentru granița ideologică ce despărțea Europa de Vest (liberă și democratică) de Europa de Est (comunistă, sub dominație sovietică)."},
+    {t:"Plan Marshall",d:"Programul american de reconstrucție economică a Europei (1948–1951), propus de generalul George Marshall. 12,4 miliarde dolari au refăcut economiile vest-europene și au prevenit extinderea comunismului."},
+  ],
+  "RSSM și Regimul Comunist Stalinist":[
+    {t:"Colectivizare",d:"Procesul forțat de transformare a gospodăriilor agricole private în proprietate colectivă (colhoz/sovhoz) de stat. Realizat în RSSM în 1944–1951 prin teroare, deportări și confiscări. A distrus agricultura tradițională basarabeană."},
+    {t:"Deportare",d:"Strămutarea forțată a unui individ sau a unei populații de pe teritoriul propriu în altă regiune sau țară. În RSSM: deportările din 1941 și 1949 (40.850 familii — 95.000 persoane) au vizat 'dușmanii poporului'."},
+    {t:"Represiune",d:"Măsuri brutale aplicate de un regim totalitar împotriva cetățenilor considerați 'dușmani'. Includ: arestări, deportări în Siberia, execuții, internare în lagăre de muncă (Gulag)."},
+    {t:"Propagandă",d:"Difuzarea sistematică și intenționată a unor informații, idei sau doctrine pentru a influența opinia publică și a controla comportamentul cetățenilor. Instrument esențial al tuturor regimurilor totalitare."},
+    {t:"Gulag",d:"Acronimul sovietic pentru Direcția Generală a Lagărelor de Muncă (ГУЛАГ). Rețea de lagăre unde erau trimiși 'dușmanii poporului'. Milioane de oameni au murit în condițiile inumane ale Gulagului."},
+    {t:"Foamete organizată",d:"Foamete provocată deliberat de autoritățile comuniste prin confiscarea hranei și recoltei de la populație, ca instrument de represiune. Foametea din RSSM (1946-1947) a ucis aproximativ 150.000 de oameni."},
+  ],
+  "Independența Republicii Moldova (1985–1991)":[
+    {t:"Suveranitate (R.Moldova)",d:"Declarația de Suveranitate a RSSM (23 iunie 1990) a proclamat supremația legilor republicii față de legile unionale. Primul pas legal decisiv spre independența deplină, obținută la 27 august 1991."},
+    {t:"Regim democratic",d:"Sistem politic în care puterea emană de la popor, exercitată prin alegeri libere și corecte. Caracteristici: pluripartidism, separarea puterilor, drepturi și libertăți garantate, presă liberă, stat de drept."},
+    {t:"Independență",d:"Starea unui stat de a-și exercita deplina suveranitate, fără nicio dependență față de alt stat. R.Moldova și-a proclamat independența la 27 august 1991, recunoscută internațional în lunile următoare."},
+    {t:"Tricolor",d:"Drapelul de stat al R.Moldova — albastru, galben, roșu — adoptat la 27 aprilie 1990. Reunifică simbolistica istorică românească cu noua identitate statală a R.Moldova independente."},
+    {t:"Limbă de stat",d:"Limbă oficială declarată prin lege ca instrument obligatoriu al comunicării publice și administrative. Parlamentul RSSM a declarat limba română limbă de stat pe 31 august 1989, reintroducând și alfabetul latin."},
+  ],
+  "Regimuri Totalitare Interbelice":[
+    {t:"Fascism",d:"Ideologie politică de extremă dreapta apărută în Italia după WWI (Mussolini). Caracteristici: naționalismul radical, statul corporatist, cultul liderului, antimarxism. Marșul spre Roma (1922) l-a adus pe Mussolini la putere."},
+    {t:"Nazism",d:"Ideologia Partidului Național-Socialist German al Muncii (NSDAP), condus de Hitler. Se baza pe rasism, antisemitism, expansionism (Lebensraum) și cultul Führerului. Cel mai criminal regim din istoria modernă."},
+    {t:"Dictatură",d:"Formă de guvernare în care puterea supremă este concentrată în mâinile unui singur individ sau grup, fără controale democratice. Elimină separarea puterilor, libertățile individuale și pluralismul politic."},
+    {t:"Cult al personalității",d:"Fenomen politic în care un lider este promovat prin propagandă intensivă ca figură aproape divină, infailibilă și indispensabilă statului. Specific regimurilor totalitare: Stalin, Hitler, Mussolini, Ceaușescu."},
+    {t:"Totalitarism",d:"Sistem politic în care statul controlează toate aspectele vieții publice și private (economie, cultură, presă, religie). Se opune oricărei forme de opoziție și elimină pluralismul. Exemple: stalinismul, nazismul, fascismul."},
+    {t:"Antisemitism",d:"Ură irațională, prejudecată sau discriminare îndreptată împotriva evreilor. Centrală în ideologia nazistă, a dus la Holocaust — exterminarea a 6 milioane de evrei în lagărele naziste."},
+  ],
+  "Criza Economică Mondială 1929–1933":[
+    {t:"Criză economică",d:"Dereglare profundă a activității economice, caracterizată prin scăderea bruscă a producției, creșterea șomajului și falimentarea întreprinderilor. Marea Criză din 1929 a fost cea mai gravă din istoria capitalismului."},
+    {t:"Șomaj",d:"Situația în care o persoană aptă de muncă nu găsește un loc de muncă. În Germania (1932): 40% din forța de muncă era șomeră; în SUA: 25%. Șomajul masiv a alimentat extremismul politic."},
+    {t:"Protecționism",d:"Politică economică prin care un stat protejează propria industrie prin taxe vamale ridicate și restricții la importuri. Adoptat de multe state după 1929, a agravat criza prin blocarea comerțului internațional."},
+  ],
+};
+
 function renderLearn(){
   const w=el('pg-learn')?.querySelector('.page-wrap');if(!w)return;
   const ch=LEARN_CHAPTERS[learnChap]||LEARN_CHAPTERS[0];
+  // Find personalities and terms for this chapter
+  const persons=LEARN_PERSONS[ch.title]||[];
+  const terms=LEARN_TERMS[ch.title]||[];
   w.innerHTML=`
   <div class="ph">
     <div class="ph-eye">Material din manual · Rezumate Cls. IX · 2023</div>
@@ -764,6 +887,37 @@ function renderLearn(){
       <div style="font-size:13.5px;line-height:1.75;color:var(--ink2)">${text}</div>
     </div>
   `).join('')}
+  ${persons.length?`
+  <div class="card" style="margin-bottom:14px;border-top:3px solid var(--gold)">
+    <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px">
+      <span style="font-size:18px">👤</span> Personalități din programă
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:11px">
+      ${persons.map(p=>`<div style="background:var(--paper2);border-radius:8px;padding:12px;border:1px solid var(--border)">
+        <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:7px">
+          <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#d4a017);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">👤</div>
+          <div>
+            <div style="font-weight:700;font-size:13.5px;color:var(--ink)">${p.n}</div>
+            <div style="font-size:10.5px;color:var(--ink4)">${p.y} · ${p.role}</div>
+          </div>
+        </div>
+        <div style="font-size:12.5px;line-height:1.65;color:var(--ink2);margin-bottom:6px">${p.bio}</div>
+        <div style="font-size:11px;color:var(--gold);font-weight:600;font-style:italic">⭐ ${p.sig}</div>
+      </div>`).join('')}
+    </div>
+  </div>`:''}
+  ${terms.length?`
+  <div class="card" style="margin-bottom:14px;border-top:3px solid var(--blue)">
+    <div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px">
+      <span style="font-size:18px">📚</span> Termeni cheie din programă
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:9px">
+      ${terms.map(t=>`<div style="background:var(--paper2);border-radius:8px;padding:11px;border:1px solid var(--border)">
+        <div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:5px">${t.t}</div>
+        <div style="font-size:12px;line-height:1.65;color:var(--ink2)">${t.d}</div>
+      </div>`).join('')}
+    </div>
+  </div>`:''}
   <div style="display:flex;gap:10px;justify-content:space-between;margin-top:8px;padding-top:16px;border-top:1px solid var(--border)">
     <button class="btn btn-outline" onclick="if(learnChap>0){learnChap--;renderLearn();}" ${learnChap===0?'disabled':''}>← Capitol anterior</button>
     <button class="btn btn-blue" onclick="goPage('practice')">⚡ Exersează</button>
@@ -1028,13 +1182,18 @@ const TL_EVENTS=[
   {y:"1919",ch:"Conferința de Pace Paris",ico:"🏛️",ev:"Conferința de Pace de la Paris",d:"18 ian.1919–21 ian.1920. 'Consiliul celor Patru': Clemenceau, Wilson, Lloyd George, Orlando."},
   {y:"1919",ch:"Sistemul de la Versailles",ico:"📜",ev:"Tratatul de la Versailles",d:"28 iunie 1919 — Tratat de pace cu Germania. Sancțiuni economice și militare drastice."},
   {y:"1920",ch:"Sistemul de la Versailles",ico:"📜",ev:"Tratatul de la Trianon",d:"4 iunie 1920 — Transilvania, Banatul, Crișana, Maramureș revin României."},
-  {y:"1921",ch:"România Interbelică",ico:"🌾",ev:"Reforma agrară din România",d:"Exproprierea a 5,8 milioane ha. Împroprietărirea a 1.393.353 de țărani."},
-  {y:"1923",ch:"România Interbelică",ico:"📖",ev:"Constituția României — 1923",d:"Legea fundamentală democratică. Separarea puterilor, vot universal, drepturi egale."},
+  {y:"1920",ch:"Mișcarea Națională Basarabia",ico:"⚔️",ev:"Congresul militarilor moldoveni",d:"Reuniunile militarilor și intelectualilor basarabeni au contribuit la afirmarea identității naționale în contextul post-Unire."},
+  {y:"1921",ch:"România Interbelică",ico:"🌾",ev:"Reforma agrară din România",d:"Exproprierea a 5,8 milioane ha. Împroprietărirea a 1.393.353 de țărani. Cea mai amplă redistribuire de pământ din istoria română."},
+  {y:"1922",ch:"Lumea Postbelică",ico:"☭",ev:"Constituirea URSS",d:"30 dec.1922 — Uniunea Republicilor Sovietice Socialiste este fondată din RSFS Rusă, RSS Ucraineană, RSS Bielorusă și RSFS Transcaucaziană."},
+  {y:"1923",ch:"România Interbelică",ico:"📖",ev:"Constituția României — 1923",d:"Legea fundamentală democratică. Separarea puterilor, vot universal, drepturi egale. Una din cele mai moderne constituții europene."},
   {y:"1924",ch:"RSSM și Regimul Comunist",ico:"☭",ev:"Crearea RASSM (Transnistria)",d:"12 oct.1924 — URSS creează RASSM ca 'cap de pod' expansionist pentru Basarabia."},
   {y:"1928",ch:"Relații Internaționale Interbelice",ico:"🕊️",ev:"Pactul Briand-Kellogg",d:"27 aug.1928 — 65 de state condamnă oficial războiul ca instrument de politică națională."},
   {y:"1929",ch:"Criza Economică 1929-1933",ico:"📉",ev:"Marea Criză Economică — Joia Neagră",d:"24 oct.1929 — Prăbușirea bursei din New York. Criza se extinde global. Șomaj masiv."},
+  {y:"1930",ch:"Relații Internaționale Interbelice",ico:"🏛️",ev:"Nicolae Titulescu — Președinte Liga Națiunilor",d:"1930–1931 — Ales de două ori consecutiv președinte al Adunării Generale a Ligii Națiunilor. Cel mai important diplomat român al perioadei interbelice."},
   {y:"1933",ch:"Regimuri Totalitare",ico:"⚠️",ev:"Hitler devine cancelar al Germaniei",d:"30 ian.1933 — Numirea lui Hitler. Instaurarea rapidă a dictaturii naziste."},
-  {y:"1938",ch:"Relații Internaționale Interbelice",ico:"⚡",ev:"Acordul de la München",d:"29-30 sept.1938 — Politica de conciliere. Marea Britanie și Franța cedează Sudetenland."},
+  {y:"1934",ch:"Relații Internaționale Interbelice",ico:"🤝",ev:"Mica Înțelegere și Înțelegerea Balcanică",d:"România, Cehoslovacia, Iugoslavia (Mica Înțelegere, 1920–1934). România, Iugoslavia, Turcia, Grecia (Înțelegerea Balcanică, 9 feb.1934). Sisteme de securitate colectivă regională."},
+  {y:"1936",ch:"Relații Internaționale Interbelice",ico:"⚠️",ev:"Pactul Anticomintern",d:"25 nov.1936 — Pactul militaro-politic Germania–Japonia (1936), Italia aderat în 1937. Alianță îndreptată contra comunismului internațional, pregătind WWII."},
+  {y:"1938",ch:"Relații Internaționale Interbelice",ico:"⚡",ev:"Acordul de la München",d:"29-30 sept.1938 — Politica de conciliere. Marea Britanie și Franța cedează Sudetenland. Eșecul securității colective."},
   {y:"1939",ch:"Pactul Ribbentrop-Molotov",ico:"🤝",ev:"Pactul Ribbentrop-Molotov",d:"23 aug.1939 — Pact de neagresiune germano-sovietic cu Protocol Secret."},
   {y:"1939",ch:"Al Doilea Război Mondial",ico:"💥",ev:"Izbucnirea celui de-al Doilea Război Mondial",d:"1 sept.1939 — Germania atacă Polonia. 3 sept. — Franța și Marea Britanie declară război."},
   {y:"1940",ch:"Pierderile Teritoriale 1940",ico:"🗺️",ev:"Pierderile teritoriale ale României",d:"Iun-sept.1940: Basarabia+N.Bucovina (URSS), N.Transilvania (Ungaria), Cadrilater (Bulgaria)."},
@@ -1043,10 +1202,18 @@ const TL_EVENTS=[
   {y:"1945",ch:"Al Doilea Război Mondial",ico:"🕊️",ev:"Sfârșitul celui de-al Doilea Război Mondial",d:"8 mai 1945: capitularea Germaniei. 2 sept.1945: capitularea Japoniei. 55-80 milioane morți."},
   {y:"1946",ch:"Lumea Postbelică",ico:"🔴",ev:"Discursul 'cortina de fier'",d:"5 mart.1946 (Fulton): Churchill descrie împărțirea Europei. Începutul oficial al Războiului Rece."},
   {y:"1947",ch:"Lumea Postbelică",ico:"💵",ev:"Planul Marshall",d:"5 iun.1947 — SUA anunță programul de reconstrucție (12,4 mld$). Contracararea comunismului."},
+  {y:"1949",ch:"RSSM și Regimul Comunist",ico:"🚂",ev:"Deportările staliniste — Operațiunea 'Sud'",d:"6-7 iulie 1949 — 40.850 familii (95.000 persoane) deportate în Siberia. Accelerarea colectivizării forțate."},
+  {y:"1955",ch:"Lumea Postbelică",ico:"🔴",ev:"Crearea Pactului de la Varșovia",d:"14 mai 1955 — Alianta militara a statelor comuniste din Europa de Est sub conducerea URSS. Contrapart la NATO."},
+  {y:"1956",ch:"Lumea Postbelică",ico:"✊",ev:"Revoluția din Ungaria",d:"23 oct.–11 nov. 1956 — Revoltă anticomunistă reprimată de tancurile sovietice. 2.500 de morți. Simbolul rezistenței față de URSS."},
+  {y:"1961",ch:"Lumea Postbelică",ico:"🧱",ev:"Construirea Zidului Berlinului",d:"13 aug.1961 — URSS construiește Zidul Berlinului, separând definitiv Berlinul de Est de cel de Vest. Simbol al Cortinei de Fier."},
+  {y:"1962",ch:"Lumea Postbelică",ico:"☢️",ev:"Criza Rachetelor din Cuba",d:"Octombrie 1962 — SUA și URSS la limita unui război nuclear. Kennedy și Hrușciov ajung la un compromis. Cel mai periculos moment al Războiului Rece."},
+  {y:"1985",ch:"Lumea Postbelică",ico:"🔄",ev:"Perestroika și Glasnost (Gorbaciov)",d:"Gorbaciov lansează 'restructurarea' (perestroika) și 'transparența' (glasnost). Reformele pregătesc destrămarea URSS."},
+  {y:"1989",ch:"Lumea Postbelică",ico:"🧱",ev:"Căderea Zidului Berlinului",d:"9 noiembrie 1989 — Sfârțitul simbolic al Cortinei de Fier. Revoluții în Estul Europei. România — singura revoluție violentă (dec.1989)."},
   {y:"1989",ch:"Independența Republicii Moldova",ico:"🌟",ev:"Mișcarea democratică în R.Moldova",d:"Cenaclul 'Alexei Mateevici' (ian.1988). Frontul Popular (mai 1989). Marea Adunare Națională (aug.1989)."},
   {y:"1989",ch:"Independența Republicii Moldova",ico:"🇲🇩",ev:"Limba română ca limbă de stat",d:"31 august 1989 — Parlamentul decretează limba română ca limbă de stat și reintroduce alfabetul latin."},
   {y:"1990",ch:"Independența Republicii Moldova",ico:"🏛️",ev:"Declarația de Suveranitate",d:"23 iunie 1990 — Primul pas legal spre independența R.Moldova."},
   {y:"1991",ch:"Independența Republicii Moldova",ico:"🎊",ev:"Independența Republicii Moldova",d:"27 august 1991 — Parlamentul votează unanim (277 deputați) Declarația de Independență."},
+  {y:"1991",ch:"Lumea Postbelică",ico:"☭",ev:"Destrămarea URSS",d:"25–26 dec.1991 — Gorbaciov demisionează, steagul sovietic coboară de pe Kremlin. 15 state independente. Sfârșitul Războiului Rece."},
 ];
 
 // ═══════════════════════════════════════
@@ -1293,6 +1460,28 @@ function renderDash(){
 // ═══════════════════════════════════════
 //  AI CHECK
 // ═══════════════════════════════════════
+// Pattern-based fallback scoring when no API is available
+function patternScore(question,model,student){
+  const t=student.trim().toLowerCase();
+  const m=model.toLowerCase();
+  const words=t.split(/\s+/).filter(w=>w.length>2);
+  const hasHist=/\b(1[89]\d\d|20\d\d|român|basarab|război|tratat|unire|republică|moldov|const|reform|partid|independ|sovietic|german|austro|ungaria|franța|anglia|urss|nato|mondial|secol|august|iunie|septembrie|octombrie|unire|republică)\b/i.test(t);
+  if(words.length<3||!hasHist)return{score:5,verdict:"INCORECT",feedback:"Răspunsul este prea scurt sau lipsesc informații istorice concrete.",plus:"—",minus:"Date istorice concrete, termeni specifici.",errors:["Lipsesc fapte istorice"]};
+  // Count key terms from the model answer that appear in the student response
+  const modelWords=m.split(/\s+/).filter(w=>w.length>4);
+  const hits=modelWords.filter(w=>t.includes(w)).length;
+  const ratio=modelWords.length>0?hits/modelWords.length:0;
+  const score=Math.min(90,Math.round(ratio*100));
+  const verdict=score>=75?"CORECT":score>=35?"PARȚIAL":"INCORECT";
+  return{
+    score,verdict,
+    feedback:score>=75?"Răspuns bun, conține elementele principale.":score>=35?"Răspuns parțial, lipsesc unele elemente esențiale.":"Răspuns insuficient. Consultați baremul și reîncercați.",
+    plus:score>10?"Ai menționat unele elemente relevante.":"—",
+    minus:score<75?"Adaugă date cronologice, personalități și termeni specifici.":"—",
+    errors:score<35?["Lipsesc elementele esențiale din barem"]:[]
+  };
+}
+
 async function aiCheck(question,model,student){
   const trimmed=student.trim();
   const words=trimmed.split(/\s+/).filter(w=>w.length>1).length;
@@ -1300,24 +1489,14 @@ async function aiCheck(question,model,student){
   const hasHist=/\b(1[89]\d\d|20\d\d|român|basarab|război|tratat|unire|republică|moldov|const|reform|partid|independ|sovietic|german|austro|ungaria|franța|anglia|urss|nato|mondial|secol|august|iunie|septembrie|octombrie)\b/i.test(trimmed);
   if(words<3||uniq<6||trimmed.length<18)
     return{score:0,verdict:"INCORECT",feedback:"Răspunsul este prea scurt sau gol. Scrie un răspuns complet cu informații istorice.",plus:"—",minus:"Tot răspunsul lipsește.",errors:["Răspuns insuficient"]};
-  const sys="Ești examinator strict la examenul național de Istorie clasa IX-a Moldova/România. NU ești tutore — ești corector de barem SEVER. Răspunsuri random sau fără fapte istorice concrete → 0.";
-  const prompt=`REGULI: random/gibberish→0; fără date/fapte istorice→max 20; CORECT(75-100): toate elementele esențiale; PARȚIAL(35-74): unele elemente; INCORECT(0-34): greșit/insuficient.
-ÎNTREBARE: ${question}
-BAREM: ${model}
-RĂSPUNS ELEV: ${student}
-Răspunde DOAR JSON: {"score":0,"verdict":"INCORECT","feedback":"2-3 prop.","plus":"ce e corect","minus":"ce lipsește","errors":["eroare"]}`;
-  // Try Claude API directly first, fallback to /api/grade backend
-  let result=null;
+  // Try backend /api/grade first (secure proxy, no browser API keys)
   try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:700,system:sys,messages:[{role:"user",content:prompt}]})});
-    if(r.ok){const d=await r.json();const raw=d.content.map(c=>c.text||"").join("").trim();result=JSON.parse(raw.replace(/^[^{]*({[\s\S]*})[^}]*$/,"$1"));}
-  }catch(e2){/* fallthrough */}
-  if(!result){
     const rb=await fetch("/api/grade",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question,barem:model,student})});
-    if(!rb.ok)throw new Error("Grade HTTP "+rb.status);
-    const db=await rb.json();if(db.error)throw new Error(db.error);result=db.result;
-  }
-  if(!result)throw new Error("Niciun răspuns AI.");
+    if(rb.ok){const db=await rb.json();if(!db.error&&db.result){const result=db.result;if(!hasHist&&result.score>20){result.score=Math.min(15,result.score);result.verdict="INCORECT";}return result;}}
+  }catch(e){/* backend unavailable, use pattern fallback */}
+  // Pattern-based fallback scoring (works offline, no API needed)
+  const result=patternScore(question,model,student);
+  result.feedback+=" ⚠️ Evaluare automată (AI indisponibil) — verificați baremul oficial.";
   if(!hasHist&&result.score>20){result.score=Math.min(15,result.score);result.verdict="INCORECT";}
   return result;
 }
@@ -1428,7 +1607,7 @@ async function submitPractice(){
     if(ba)ba.style.display="none";if(bb)bb.style.display="flex";if(pm)pm.style.display="block";
     el("ai-res-prac")?.scrollIntoView({behavior:"smooth",block:"nearest"});
   }catch(e){
-    el("ai-res-prac").innerHTML=`<div style="padding:11px;background:var(--red-pale);border:1px solid rgba(192,57,43,.2);border-radius:6px;font-size:13px;color:var(--red)">❌ ${e.message}<br><span style="color:var(--ink4);font-size:11px">AI funcționează nativ în claude.ai.</span></div>`;
+    el("ai-res-prac").innerHTML=`<div style="padding:11px;background:var(--red-pale);border:1px solid rgba(192,57,43,.2);border-radius:6px;font-size:13px;color:var(--red)">❌ ${e.message}<br><span style="color:var(--ink4);font-size:11px">Verifică baremul oficial și compară cu răspunsul tău.</span></div>`;
     if(btn){btn.disabled=false;btn.innerHTML="🤖 Verifică cu AI";}
   }
 }
@@ -1504,9 +1683,10 @@ function renderExam(){
         <button class="btn btn-red btn-sm" onclick="finishExam()">Finalizează</button>
       </div>
       <div class="card" style="margin-bottom:12px">
-        <div style="display:flex;gap:6px;margin-bottom:11px;flex-wrap:wrap"><span class="tag t-ink">${q.ch}</span><span class="tag t-blue">${q.pts} puncte</span></div>
+        <div style="display:flex;gap:6px;margin-bottom:11px;flex-wrap:wrap"><span class="tag t-ink">${q.ch}</span><span class="tag t-blue">${q.pts} puncte</span>${q.id&&q.id.startsWith("qs")?'<span class="tag t-gold">📌 Din barem oficial</span>':""}</div>
         <p style="font-size:15px;font-weight:500;line-height:1.7;margin-bottom:12px;color:var(--ink)">${q.q}</p>
         ${q.src?`<div class="src-box">"${q.src}"</div>`:""}
+        ${q.sources&&q.sources.length?`<div class="pra-src-wrap" style="margin-bottom:10px"><div class="pra-src-head">📌 Surse documentare</div>${q.sources.map((s,i)=>`<div class="pra-src-item"><div class="pra-src-ltr">Sursa ${String.fromCharCode(65+i)}</div><div class="pra-src-txt">${s}</div></div>`).join('')}</div>`:""}
         <textarea class="inp" id="eans" placeholder="Scrie răspunsul tău..." rows="6" oninput="examAns['${q.id}']=this.value">${examAns[q.id]||""}</textarea>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
@@ -1518,8 +1698,15 @@ function renderExam(){
   }
 }
 function startExam(){
-  const sel=[];CHAPTERS.slice(1).forEach(c=>{const p=QS.filter(q=>q.ch===c.id);if(p.length)sel.push(rnd(p));});
-  examQs=shuf(sel).slice(0,15);examAns={};examCur=0;examLeft=7200;examPhase="running";
+  // Mix regular questions AND sourced baremuri questions (qs01-qs08) for authenticity
+  const sourcedQs=QS.filter(q=>q.id&&q.id.startsWith("qs"));
+  const regularQs=QS.filter(q=>!q.id.startsWith("qs"));
+  const sel=[];
+  CHAPTERS.slice(1).forEach(c=>{const p=regularQs.filter(q=>q.ch===c.id);if(p.length)sel.push(rnd(p));});
+  // Add 3-5 sourced questions from baremuri for realism
+  const sourcedPick=shuf(sourcedQs).slice(0,Math.min(4,sourcedQs.length));
+  const combined=shuf([...sel,...sourcedPick]);
+  examQs=combined.slice(0,15);examAns={};examCur=0;examLeft=7200;examPhase="running";
   clearInterval(examIv);
   examIv=setInterval(()=>{
     examLeft--;
@@ -1790,6 +1977,20 @@ const HM_WORDS=[
   {w:"DEPORTARE",h:"Expulzarea forțată a unei populații dintr-o regiune"},
   {w:"REFERENDUM",h:"Consultarea directă a cetățenilor printr-un vot popular"},
   {w:"PLEBISCIT",h:"Vot popular direct pentru a decide o chestiune politică"},
+  {w:"ANSCHLUSS",h:"Anexarea Austriei de către Germania în 1938"},
+  {w:"BOLSEVISM",h:"Curent marxist radical, baza ideologică a URSS (Lenin)"},
+  {w:"GULAG",h:"Rețea de lagăre de muncă forțată din URSS"},
+  {w:"PERESTROIKA",h:"Restructurarea economico-politică a URSS sub Gorbaciov (1985)"},
+  {w:"GLASNOST",h:"Transparența politică introdusă de Gorbaciov în URSS"},
+  {w:"HOLOCAUST",h:"Exterminarea sistematică a evreilor de către regimul nazist"},
+  {w:"ANTANTA",h:"Alianța Franța-Marea Britanie-Rusia în Primul Război Mondial"},
+  {w:"SUVERAN",h:"Stat sau persoană care deține puterea supremă"},
+  {w:"ARMISTIȚIU",h:"Acord de încetare temporară a focului în timp de război"},
+  {w:"REPARATII",h:"Compensații financiare plătite de statul înfrânt după război"},
+  {w:"SFATULTARII",h:"Organul legislativ suprem al Basarabiei (1917-1918)"},
+  {w:"DICTATURA",h:"Regim politic în care toată puterea aparține unui singur lider"},
+  {w:"REPRESIUNE",h:"Acțiuni brutale ale unui regim totalitar împotriva cetățenilor"},
+  {w:"FOAMETE",h:"Lipsă gravă de hrană, adesea organizată ca instrument politic"},
 ];
 function startHangman(){gameMode="hangman";const e=rnd(HM_WORDS);hmWord=e.w;hmHint=e.h;hmGuessed=[];hmWrong=0;renderHangman();}
 function hmGuess(l){
@@ -1831,6 +2032,10 @@ const SORT_SETS=[
   {label:"Tratatele Sistemului Versailles",items:[{y:1919,m:6,ev:"Tratatul de la Versailles (Germania)"},{y:1919,m:9,ev:"Tratatul Saint-Germain (Austria)"},{y:1920,m:6,ev:"Tratatul de la Trianon (Ungaria)"},{y:1920,m:10,ev:"Tratatul de la Paris (Basarabia)"}]},
   {label:"Al Doilea Război Mondial",items:[{y:1939,m:8,ev:"Pactul Ribbentrop-Molotov"},{y:1939,m:9,ev:"Atacul Germaniei asupra Poloniei"},{y:1940,m:6,ev:"Pierderile teritoriale România"},{y:1944,m:8,ev:"Lovitura de stat 23 august 1944"}]},
   {label:"Independența R.Moldova",items:[{y:1989,m:8,ev:"Limba română ca limbă de stat"},{y:1990,m:4,ev:"Votarea tricolorului"},{y:1990,m:6,ev:"Declarația de Suveranitate"},{y:1991,m:8,ev:"Declarația de Independență"}]},
+  {label:"Regimuri totalitare interbelice",items:[{y:1922,m:10,ev:"Marșul spre Roma — Mussolini (Italia)"},{y:1924,m:1,ev:"Stalin preia puterea în URSS"},{y:1933,m:1,ev:"Hitler devine cancelar (Germania)"},{y:1936,m:7,ev:"Război civil în Spania (Franco)"}]},
+  {label:"România interbelică",items:[{y:1918,m:12,ev:"Marea Unire — 1 decembrie 1918"},{y:1921,m:7,ev:"Reforma agrară"},{y:1923,m:3,ev:"Constituția democratică"},{y:1938,m:2,ev:"Dictatura regală Carol II"}]},
+  {label:"Lumea postbelică — Războiul Rece",items:[{y:1947,m:6,ev:"Planul Marshall (SUA)"},{y:1949,m:4,ev:"Crearea NATO"},{y:1955,m:5,ev:"Pactul de la Varșovia"},{y:1961,m:8,ev:"Construirea Zidului Berlinului"}]},
+  {label:"Criza și colapsul URSS",items:[{y:1985,m:3,ev:"Gorbaciov — Perestroika"},{y:1989,m:11,ev:"Căderea Zidului Berlinului"},{y:1991,m:8,ev:"Independența R.Moldova"},{y:1991,m:12,ev:"Destrămarea URSS"}]},
 ];
 function startSort(){gameMode="sort";sortSet=rnd(SORT_SETS);sortOrder=shuf([...sortSet.items]);sortChecked=false;renderSort();}
 function sortMove(idx,dir){const ni=idx+dir;if(ni<0||ni>=sortOrder.length)return;[sortOrder[idx],sortOrder[ni]]=[sortOrder[ni],sortOrder[idx]];renderSort();}
@@ -1999,7 +2204,7 @@ function renderSettings(){
       <button class="btn btn-red btn-sm" onclick="confirmReset()">Reset</button>
     </div>
   </div>
-  <div style="text-align:center;margin-top:20px;color:var(--ink4);font-size:11px;letter-spacing:.5px">ExamPro v4.1 Integrat · Examen Național · Republica Moldova</div>`;
+  <div style="text-align:center;margin-top:20px;color:var(--ink4);font-size:11px;letter-spacing:.5px">ExamPro v11 · Examen Național · Republica Moldova · ${new Date().getFullYear()}</div>`;
 }
 function confirmReset(){
   // confirm() is blocked in sandboxed iframes — use custom modal
@@ -2323,30 +2528,34 @@ async function sendChat(){
   t.innerHTML=badge+'<span class="spin"></span>';
   wrap.appendChild(t);wrap.scrollTop=wrap.scrollHeight;
   const msgs=chatHistory.filter(m=>m.role!=="ai"||!m.text.includes("spin")).slice(-14).map(m=>({role:m.role==="ai"?"assistant":"user",content:m.text.replace(/<[^>]+>/g,"")}));
+  const modelKey=chatModel==="claude"?"claude":chatModel==="gpt"?"gpt":"gemini";
+  const externalUrls={claude:"https://claude.ai",gpt:"https://chatgpt.com",gemini:"https://gemini.google.com"};
+  const externalNames={claude:"Claude.ai (Anthropic)",gpt:"ChatGPT (OpenAI)",gemini:"Gemini (Google)"};
   try{
-    let reply="";
-    if(chatModel==="claude"){
-      const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:700,system:CHAT_SYS,messages:msgs})});
-      if(!r.ok)throw new Error("Claude HTTP "+r.status);
-      const d=await r.json();reply=d.content.map(c=>c.text||"").join("");
-    } else if(chatModel==="gpt"){
-      const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"gpt",messages:msgs})});
-      if(!r.ok)throw new Error("GPT HTTP "+r.status);
-      const d=await r.json();if(d.error)throw new Error(d.error);reply=d.reply||"Fără răspuns";
-    } else {
-      const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"gemini",messages:msgs})});
-      if(!r.ok)throw new Error("Gemini HTTP "+r.status);
-      const d=await r.json();if(d.error)throw new Error(d.error);reply=d.reply||"Fără răspuns";
-    }
+    const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:modelKey,system:CHAT_SYS,messages:msgs})});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const d=await r.json();if(d.error)throw new Error(d.error);
+    const reply=d.reply||"Fără răspuns";
     el(tid)?.remove();addChatMsg("ai",reply);
   }catch(e){
-    const isKey=e.message.includes("401")||e.message.includes("403")||e.message.includes("KEY_PLACEHOLDER");
     el(tid)?.remove();
-    addChatMsg("ai",isKey?
-      (chatModel==="claude"?"✅ Claude funcționează nativ în **claude.ai** — ești deja pe platforma lui!":
-       chatModel==="gpt"?"🔑 GPT necesită cheia API OpenAI configurată în backend-ul `/api/chat`. Contactează administratorul.":
-       "🔑 Gemini necesită cheia API Google configurată în backend-ul `/api/chat`. Contactează administratorul."):
-      "❌ Eroare: "+e.message);
+    const extUrl=externalUrls[chatModel];
+    const extName=externalNames[chatModel];
+    const encodedQ=encodeURIComponent("Ești tutore de Istorie IX Moldova. "+msg);
+    addChatMsg("ai",
+      `⚠️ Serviciul AI nu este disponibil local (${e.message}).\n\nPoți pune aceeași întrebare direct pe:\n\n[🔗 Deschide ${extName}](${extUrl}) pentru a continua conversația.\n\n_Copiază întrebarea ta și paste-o acolo._`
+    );
+    // Show external link buttons
+    const linksDiv=document.createElement("div");
+    linksDiv.style.cssText="display:flex;gap:7px;flex-wrap:wrap;padding:6px 10px 10px";
+    [{label:"Claude.ai",url:"https://claude.ai",col:"var(--red)"},{label:"ChatGPT",url:"https://chatgpt.com",col:"var(--green)"},{label:"Gemini",url:"https://gemini.google.com",col:"var(--blue)"}].forEach(({label,url,col})=>{
+      const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener noreferrer";
+      a.style.cssText=`font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid ${col};color:${col};text-decoration:none;font-weight:600`;
+      a.textContent="↗ "+label;
+      linksDiv.appendChild(a);
+    });
+    el("ch-msgs")?.appendChild(linksDiv);
+    el("ch-msgs").scrollTop=el("ch-msgs").scrollHeight;
   }
   btn.disabled=false;
 }
